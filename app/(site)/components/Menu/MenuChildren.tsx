@@ -2,30 +2,21 @@
 
 import styles from './Menu.module.scss';
 
-import CoursesIcon from '@/public/assets/icons/course.svg';
-import ServicesIcon from '@/public/assets/icons/services.svg';
-import BooksIcon from '@/public/assets/icons/books.svg';
-import ProductsIcon from '@/public/assets/icons/products.svg';
 import { FirstLevelMenuItem, MenuItem, PageItem } from '@/interfaces/menu.interface';
-import { TopLevelCategory } from '@/interfaces/page.interface';
 import Link from 'next/link';
 import cn from 'classnames';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
+import { firstLevelMenu } from '@/helpers/helpers';
 
-const firstLevelMenu: FirstLevelMenuItem[] = [
- { route: 'courses', name: 'Курсы', icon: <CoursesIcon />, id: TopLevelCategory.Courses },
- { route: 'services', name: 'Сервисы', icon: <ServicesIcon />, id: TopLevelCategory.Services },
- { route: 'books', name: 'Книги', icon: <BooksIcon />, id: TopLevelCategory.Books },
- { route: 'products', name: 'Продукты', icon: <ProductsIcon />, id: TopLevelCategory.Products },
-];
-
-export const MenuChildren = ({ menu }: { menu: MenuItem[] }): JSX.Element => {
+export const MenuChildren = ({ menu }: { menu: MenuItem[][] }): JSX.Element => {
  const pathname = usePathname();
- const firstCategory = 0;
- const [menuState, setMenuState] = useState<MenuItem[]>(menu);
+ const [menuState, setMenuState] = useState<MenuItem[]>(menu[0]);
  const setMenu = (newMenu: MenuItem[]) => {
   setMenuState(newMenu);
+ };
+ const updateMenu = (type: number) => {
+  setMenuState(menu[type]);
  };
 
  const openSecondLevel = (secondCategory: string) => {
@@ -44,16 +35,16 @@ export const MenuChildren = ({ menu }: { menu: MenuItem[] }): JSX.Element => {
   return firstLevelMenu.map((m) => {
    return (
     <div key={m.route}>
-     <Link href={`${m.route}`}>
+     <Link href={`/${m.route}`} onClick={() => updateMenu(m.id)}>
       <div
        className={cn(styles.firstLevel, {
-        [styles.firstLevelActive]: m.id == firstCategory,
+        [styles.firstLevelActive]: pathname.includes(firstLevelMenu[m.id].route),
        })}>
        {m.icon}
        <span>{m.name}</span>
       </div>
      </Link>
-     {m.id == firstCategory && buildSecondLevel(m)}
+     {pathname.includes(firstLevelMenu[m.id].route) && buildSecondLevel(m)}
     </div>
    );
   });

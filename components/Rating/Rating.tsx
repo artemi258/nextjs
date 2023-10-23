@@ -6,12 +6,7 @@ import { IRatingProps } from './Rating.props';
 import StarIcon from './star.svg';
 import cn from 'classnames';
 
-const Rating = ({
- isEditable = false,
- rating,
- setRating,
- ...props
-}: IRatingProps): JSX.Element => {
+const Rating = ({ isEditable = false, rating, setRating, ...props }: IRatingProps): JSX.Element => {
  const [ratingArray, setRatingArray] = useState<JSX.Element[]>(new Array(5).fill(<></>));
 
  useEffect(() => {
